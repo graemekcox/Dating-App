@@ -1,14 +1,13 @@
 import React from 'react';
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
-import Person from './Person.js'
-
+import Person from './components/Person.js'
+import Chat from './components/Chat.js'
 import './App.css';
 
-function Conversations(){
+function Profile() {
   return (
-
     <div>
-      <h1>Hello</h1>
+      <h1> This is your profile</h1>
     </div>
   )
 }
@@ -105,16 +104,11 @@ class App extends React.Component {
         <div class="row">
           <Sidebar/>
           <main class="col-md-10 ml-sm-auto col-lg-10 px-4" role="main">
-            {/* <Rout */}
-            <Route path="/g/" component={Conversations}></Route>
+            <Route path="/convo"   component={Chat}></Route>
             <Route path="/help" component={Help}></Route>
             <Route path="/match" component={Person}></Route>
             <Route path="/settings" component={Settings}></Route>
-            {/* <section class="jumbotron text-center">
-              <div class="container"> 
-                <Person/>
-              </div>
-            </section> */}
+            <Route exact path="/" Component={Profile}></Route>
           </main>
         </div>
       </div>
