@@ -18,7 +18,7 @@ class Chatlog extends React.Component{
     render() {
         return (
             <div>
-                <h1>Messages go here</h1>
+                
             </div>
         );  
     }
@@ -62,7 +62,7 @@ class Chat extends React.Component{
                     <div id="chat-title">
                         <h1> John Doe</h1>
                     </div>
-                    <div id="chat-msg-list bg-primary">
+                    {/* <div id="chat-msg-list bg-primary">
                         <div class="message-row">
                             <div class="message-text text-left"> Hello</div>
                         </div>
@@ -75,10 +75,11 @@ class Chat extends React.Component{
                         <div class="message-row">
                             <div class="message-text text-right">Blocked</div>
                         </div>
-                    </div>
+                    </div> */}
+                    <Chatlog/>
                     <footer>
                         <div class="form-group">
-                            <label for="message-input">Send Message</label>
+                            {/* <label for="message-input">Send Message</label> */}
                             <input class="form-control" id="message-input"
                             aria-describedby="messageForm" placeholder="Send a message?"></input>
                             <small class="form-text text-muted">They seem like they want to talk</small>

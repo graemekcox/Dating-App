@@ -1,7 +1,11 @@
 import React from 'react';
-import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Link, Route, Switch, Redirect} from 'react-router-dom';
 import Person from './components/Person.js'
 import Chat from './components/Chat.js'
+import {auth} from './services/firebase';
+import Signup from './pages/Signup.js'
+import Help from './pages/Help.js'
+import Login from './pages/Login.js'
 import './App.css';
 
 function Profile() {
@@ -9,16 +13,6 @@ function Profile() {
     <div>
       <h1> This is your profile</h1>
     </div>
-  )
-}
-
-function Help() {
-  return(
-    <section class="text-center">
-      <p>
-        Here is a description on how to use the site
-      </p>
-  </section>
   )
 }
 
@@ -45,15 +39,21 @@ function Sidebar (){
             </a>
           </li>
           <li class="nav-item">
-
             <a class="nav-link" href="#">
-              
               <svg width="32" height="32" 
                viewBox="0 0 32 32" class="bi bi-chat-dots-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
               </svg>
-              <Link to='/convo'>Conversations</Link>
-              {/* Conversations */}
+              <Link to='/login'>Login</Link>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg width="32" height="32" 
+               viewBox="0 0 32 32" class="bi bi-chat-dots-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+              </svg>
+              <Link to='/chat'>Conversations</Link>
             </a>
           </li>
           <li class="nav-item">
@@ -84,11 +84,67 @@ function Sidebar (){
 
 }
 
+// This helps block routes that requir athentication
+function PrivateRoute({ component: Component, authenticated, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        authenticated === true ? (
+          <Component {...props} />
+        ) : (
+            <Redirect
+              to={{ pathname: "/login", state: { from: props.location } }}
+            />
+          )
+      }
+    />
+  );
+}
+
+function PublicRoute({ component: Component, authenticated, ...rest}) {
+  return (
+    <Route {...rest}
+    render={(props) => authenticated === false
+    ? <Component {...props} />
+    : <Redirect to='/chat' />}
+  />
+  )
+}
+
+
 class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      authenticated: false,
+      loading: true,
+    }
+  }
+
+  componentDidMount() {
+    auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({
+          authenticated: true,
+          loading: false
+        });
+      } else {
+        this.setState({
+          authenticated: false,
+          loading: false
+        });
+      }
+    });
+  }
   render() {
-    return (
-      <Router>
-      <div class="cover-container-fluid">
+    return this.state.loading === true ? (
+      <div className="spinner-border text-success" role="status">
+        <span className="sr-only">Loading...</span>
+      </div>
+    ) : (
+      // <div class="cover-container-fluid">
+        <Router>
         <nav class="navbar navbar-dark bg-dark box-shadow">
               <div class="navbar-brand d-flex align-items-center">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-half m-2" fill="white" xmlns="http://www.w3.org/2000/svg">
@@ -100,19 +156,27 @@ class App extends React.Component {
               <button class="navbar-toggler" type="button" data-toggle="collapse">
                 <span class="navbar-toggler-icon"/>
               </button>
-          </nav>
+          </nav> 
         <div class="row">
-          <Sidebar/>
-          <main class="col-md-10 ml-sm-auto col-lg-10 px-4" role="main">
-            <Route path="/convo"   component={Chat}></Route>
-            <Route path="/help" component={Help}></Route>
-            <Route path="/match" component={Person}></Route>
-            <Route path="/settings" component={Settings}></Route>
-            <Route exact path="/" Component={Profile}></Route>
-          </main>
+           <Sidebar/>
+
+            <Switch>
+              <Route exact path="/" component={Help}/>
+              <PrivateRoute path="/chat"  
+              authenticated={this.state.authenticated} 
+              component={Chat}/>
+              <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>
+              <Route path="/help" component={Help}/>
+              <Route path="/settings" component={Settings}></Route>
+              <Route exact path="/" Component={Profile}></Route>
+              <PublicRoute path="/login" 
+              authenticated={this.state.authenticated} component={Login}/>
+              <PublicRoute path="/signup" authenticated={this.state.authenticated} component={Signup}/>
+            </Switch>
+          
         </div>
-      </div>
-      </Router>
+        </Router>
+      // </div>
 
     )
   }
