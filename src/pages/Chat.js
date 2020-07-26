@@ -7,39 +7,6 @@ import {db} from "../services/firebase"
 let names = ['Jane', 'John']
 
 // need to know if message is our own
-class Message extends React.Component{
-    constructor(props){
-        super(props);
-
-    }
-}
-
-class Chatlog extends React.Component{
-    render() {
-        return (
-            <div>
-                
-            </div>
-        );  
-    }
-}
-
-function Contacts(){
-    return (
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar border-right border-left">
-        <div class="sidebar-sticky">
-            <ul class="nav flex-column">
-                {names.map( (name) => (
-                    // Add Avatar?
-                    <Link to="/convo/${name}">{name}</Link>))
-                }
-            </ul>
-        </div>
-    </nav>
-
-    );
-}
-
 class Chat extends React.Component {
     constructor(props) {
         super(props);
@@ -50,6 +17,8 @@ class Chat extends React.Component {
             readError: null,
             writeError: null
         }
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     async componentDidMount(){
@@ -64,6 +33,27 @@ class Chat extends React.Component {
             });
         } catch (error) {
             this.setState({readError: error.message})
+        }
+    }
+
+    handleChange(event) {
+        this.setState({
+            content: event.target.value
+        })
+    }
+
+    async handleSubmit(event) {
+        event.preventDefault();
+        this.setState({ writeError: null});
+        try {
+            await db.ref("chats").push({
+                content: this.state.content,
+                timestamp: Date.now(),
+                uid: this.state.user.uid
+            });
+            this.setState({ content: ''});
+        } catch (error) {
+            this.setState({ writeError: error.message});
         }
     }
 
