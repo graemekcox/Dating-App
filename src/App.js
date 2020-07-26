@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Link, Route, Switch, Redirect} from 'react-router-dom';
 import Person from './components/Person.js'
-import Chat from './components/Chat.js'
+import Chat from './pages/Chat.js'
 import {auth} from './services/firebase';
 import Signup from './pages/Signup.js'
 import Help from './pages/Help.js'
