@@ -12,24 +12,40 @@ class Chat extends React.Component {
         super(props);
         this.state = {
             user: auth().currentUser,
+            matched_uid: "ZsD7vsIYiec5lzITy21tz7HLO9T2", // FIXME temp hardcode another user ID
             chats: [],
+            chat_uid: "one",
             content: '',
             readError: null,
             writeError: null
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.myRef = React.createRef;
     }
 
     async componentDidMount(){
         this.setState ({readError: null});
+        const chatArea = this.myRef.current;
+
+        // First get chatID
+        // try {
+        //     db.ref("Users/" + this.state.user.uid+"_" + this.state.matched_uid+"/chats").on("value", snapshot => {
+        //         this.setState({chat_id: snapshot});
+        //     });
+        // } catch (error) {
+        //     this.setState({readError: error.message})
+        // }
+
         try {
-            db.ref("chat").on("value", snapshot => {
+            db.ref("messages/" + this.state.chat_uid+"/messages").on("value", snapshot => {
                 let chats= [];
                 snapshot.forEach ((snap) => {
                     chats.push(snap.val());
                 })
+                chats.sort(function (a,b) {return a.timestamp - b.timestamp})
                 this.setState({chats});
+                // chatArea.scrollBy(0, chatArea.scrollHeight)
             });
         } catch (error) {
             this.setState({readError: error.message})
@@ -44,9 +60,10 @@ class Chat extends React.Component {
 
     async handleSubmit(event) {
         event.preventDefault();
+        console.log(this.state.user.uid)
         this.setState({ writeError: null});
         try {
-            await db.ref("chats").push({
+            await db.ref("messages/" + this.state.chat_uid+"/messages").push({
                 content: this.state.content,
                 timestamp: Date.now(),
                 uid: this.state.user.uid
@@ -57,12 +74,29 @@ class Chat extends React.Component {
         }
     }
 
+    formatTime(timestamp){
+        const d = new Date(timestamp);
+        const time = `${d.getDate()}/${(d.getMonth()+1)}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+        return time
+    }
+
     render() {
         return (
             <div>
-                <div className="chats">
+                <div className="chat-area" ref={this.myRef}>
                     {this.state.chats.map(chat => {
-                        return <p key={chat.timestamp}>{chat.content}</p>
+                        return (
+                            <div class="">
+                                <p key={chat.timestamp} className={"chat-bubble " + (this.state.user.uid === chat.uid ? 
+                                "current-user" : "")}
+                                 class={((this.state.user.uid === chat.uid) ? "bg-primary text-right" : "bg-success text-left")}>
+                                {chat.content}
+                                <br/>
+                                <span className="chat-time float-right">{this.formatTime(chat.timestamp)}</span>
+                                </p>
+                            </div>
+                        )
+
                     })}
                 </div>
                 <form onSubmit={this.handleSubmit}>
