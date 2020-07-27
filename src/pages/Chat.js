@@ -6,6 +6,45 @@ import {db} from "../services/firebase"
 //FIXME Temp until we have IDs we can fetch
 let names = ['Jane', 'John']
 
+function formatTime(timestamp){
+    const d = new Date(timestamp);
+    const time = `${d.getDate()}/${(d.getMonth()+1)}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+    return time
+}
+
+
+function Contacts(){
+    return (
+        <nav class="col-md-2 bg-light sidebar border-right border-left container-fluid">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    {names.map( (name) => (
+                        // Add Avatar?
+                        <Link to="/convo/${name}">{name}</Link>))
+                    }
+                </ul>
+            </div>
+        </nav>
+    );
+}
+
+function Message(props){
+    return (
+        <div class="container-fluid mb-2 rounded">
+            <div class={((props.user.uid === props.chat.uid) ? 
+                "w-25 p-3 col-md-6 offset-md-8 bg-primary text-right rounded"
+             :  "w-25 p-3 col-md-6  bg-success text-right rounded")}>
+            <p key={props.chat.timestamp} className={"chat-bubble " + (props.user.uid === props.chat.uid ? 
+                "current-user" : "")}
+                >
+                {props.chat.content}
+                <br/>
+                {/* <span className="chat-time float-right">{formatTime(props.chat.timestamp)}</span> */}
+            </p>
+            </div>
+        </div>
+    );
+}
 // need to know if message is our own
 class Chat extends React.Component {
     constructor(props) {
@@ -74,42 +113,33 @@ class Chat extends React.Component {
         }
     }
 
-    formatTime(timestamp){
-        const d = new Date(timestamp);
-        const time = `${d.getDate()}/${(d.getMonth()+1)}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
-        return time
-    }
 
     render() {
         return (
-            <div>
-                <div className="chat-area" ref={this.myRef}>
-                    {this.state.chats.map(chat => {
-                        return (
-                            <div class="">
-                                <p key={chat.timestamp} className={"chat-bubble " + (this.state.user.uid === chat.uid ? 
-                                "current-user" : "")}
-                                 class={((this.state.user.uid === chat.uid) ? "bg-primary text-right" : "bg-success text-left")}>
-                                {chat.content}
-                                <br/>
-                                <span className="chat-time float-right">{this.formatTime(chat.timestamp)}</span>
-                                </p>
-                            </div>
-                        )
+            <div class="row">
+                <Contacts/>   
+                <div class="border col-md-10 dml-sm-auto col-lg-10 pt-3 px-4 container-fluid">
+                    <div className="chat-area" class="container-fluid" ref={this.myRef}>
+                        {this.state.chats.map(chat => {
+                            return (
+                                <Message user={this.state.user} chat={chat} />
+                            )
 
-                    })}
-                </div>
-                <form onSubmit={this.handleSubmit}>
-                {/* <input onChange={this.handleChange} value={this.state.content}></input> */}
-                    <input onChange={this.handleChange} value={this.state.content}/>
-                    {this.state.error ? <p>{this.state.writeError}</p> : null}
-                    <button type="submit">Send</button>
-                </form>
-                <div>
-                    Login is as: <strong>{this.state.user.email}</strong>
-                </div>
+                        })}
+                    </div>
+                    <form onSubmit={this.handleSubmit}>
+                    {/* <input onChange={this.handleChange} value={this.state.content}></input> */}
+                        <input class="ml-4"
+                        onChange={this.handleChange} value={this.state.content}/>
+                        {this.state.error ? <p>{this.state.writeError}</p> : null}
+                        <button type="submit" class="btn ml-4 btn-primary"
+                        >Send</button>
+                    </form>
+                    <div>
+                        Login is as: <strong>{this.state.user.email}</strong>
+                    </div>
 
-                {/* <div> */}
+                </div>
 
             </div>
         )

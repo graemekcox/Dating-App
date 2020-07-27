@@ -159,21 +159,21 @@ class App extends React.Component {
           </nav> 
         <div class="row">
            <Sidebar/>
-
-            <Switch>
-              <Route exact path="/" component={Help}/>
-              <PrivateRoute path="/chat"  
-              authenticated={this.state.authenticated} 
-              component={Chat}/>
-              <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>
-              <Route path="/help" component={Help}/>
-              <Route path="/settings" component={Settings}></Route>
-              <Route exact path="/" Component={Profile}></Route>
-              <PublicRoute path="/login" 
-              authenticated={this.state.authenticated} component={Login}/>
-              <PublicRoute path="/signup" authenticated={this.state.authenticated} component={Signup}/>
-            </Switch>
-          
+            <div class="col-md-9">
+              <Switch>
+                <Route exact path="/" component={Help}/>
+                <PrivateRoute path="/chat"  
+                authenticated={this.state.authenticated} 
+                component={Chat}/>
+                <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>
+                <Route path="/help" component={Help}/>
+                <Route path="/settings" component={Settings}></Route>
+                <Route exact path="/" Component={Profile}></Route>
+                <PublicRoute path="/login" 
+                authenticated={this.state.authenticated} component={Login}/>
+                <PublicRoute path="/signup" authenticated={this.state.authenticated} component={Signup}/>
+              </Switch>
+            </div>
         </div>
         </Router>
       // </div>
