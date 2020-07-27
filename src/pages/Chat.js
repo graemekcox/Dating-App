@@ -2,6 +2,8 @@ import React from 'react';
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import {auth} from "../services/firebase";
 import {db} from "../services/firebase"
+import firebase from 'firebase';
+import { textChangeRangeIsUnchanged } from 'typescript';
 
 //FIXME Temp until we have IDs we can fetch
 let names = ['Jane', 'John']
@@ -32,8 +34,8 @@ function Message(props){
     return (
         <div class="container-fluid mb-2 rounded">
             <div class={((props.user.uid === props.chat.uid) ? 
-                "w-25 p-3 col-md-6 offset-md-8 bg-primary text-right rounded"
-             :  "w-25 p-3 col-md-6  bg-success text-right rounded")}>
+                "offset-md-8 bg-primary  "
+             :  "bg-success ") + "w-25 p-3 col-md-6 text-right rounded"}>
             <p key={props.chat.timestamp} className={"chat-bubble " + (props.user.uid === props.chat.uid ? 
                 "current-user" : "")}
                 >
@@ -69,15 +71,29 @@ class Chat extends React.Component {
 
         // First get chatID
         // try {
-        //     db.ref("Users/" + this.state.user.uid+"_" + this.state.matched_uid+"/chats").on("value", snapshot => {
+        //     db.ref("Users/" + this.state.user.uid+"chats/" + this.state.matched_uid).on("value", snapshot => {
         //         this.setState({chat_id: snapshot});
+        //         console.log(snapshot)
         //     });
         // } catch (error) {
         //     this.setState({readError: error.message})
         // }
+        // const user = firebase.database().ref("Users/"+ this.state.user.uid)
+        // const data = 1234;
+        try{
+        db.ref('users/'+this.state.user.uid+'/chats/').child(this.state.matched_uid).on("value",
+            function(snapshot){
+                // this.setState({ chat_uid : snapshot.val()})
+                console.log(snapshot.val())
+                // this.setState({ chat_uid : snapshot.val()})
+            });
+        } catch(error){
+            // console.log
+            this.setState({readError: error.message})
+        }
 
         try {
-            db.ref("messages/" + this.state.chat_uid+"/messages").on("value", snapshot => {
+            db.ref("messages/" + this.state.chat_uid+"/").on("value", snapshot => {
                 let chats= [];
                 snapshot.forEach ((snap) => {
                     chats.push(snap.val());
@@ -102,7 +118,7 @@ class Chat extends React.Component {
         console.log(this.state.user.uid)
         this.setState({ writeError: null});
         try {
-            await db.ref("messages/" + this.state.chat_uid+"/messages").push({
+            await db.ref("messages/" + this.state.chat_uid+"/").push({
                 content: this.state.content,
                 timestamp: Date.now(),
                 uid: this.state.user.uid
@@ -127,14 +143,15 @@ class Chat extends React.Component {
 
                         })}
                     </div>
-                    <form onSubmit={this.handleSubmit}>
-                    {/* <input onChange={this.handleChange} value={this.state.content}></input> */}
-                        <input class="ml-4"
-                        onChange={this.handleChange} value={this.state.content}/>
-                        {this.state.error ? <p>{this.state.writeError}</p> : null}
-                        <button type="submit" class="btn ml-4 btn-primary"
-                        >Send</button>
-                    </form>
+                    {/* <div class="form-inline mb-mr-2 mr-4"> */}
+                        <form class="form-inline mb-2 mr-4" onSubmit={this.handleSubmit}>
+                            <input class="ml-4 mb-2 container-fluid"
+                                onChange={this.handleChange} value={this.state.content}/>
+                                {this.state.error ? <p>{this.state.writeError}</p> : null}
+                            <button type="submit" class="btn ml-4 btn-primary"
+                            >Send</button>
+                        </form>
+                    {/* </div> */}
                     <div>
                         Login is as: <strong>{this.state.user.email}</strong>
                     </div>
