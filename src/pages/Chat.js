@@ -22,7 +22,7 @@ function Contacts(){
                 <ul class="nav flex-column">
                     {names.map( (name) => (
                         // Add Avatar?
-                        <Link to="/convo/${name}">{name}</Link>))
+                        <Link key={name} to="/convo/${name}">{name}</Link>))
                     }
                 </ul>
             </div>
@@ -53,9 +53,10 @@ class Chat extends React.Component {
         super(props);
         this.state = {
             user: auth().currentUser,
-            matched_uid: "ZsD7vsIYiec5lzITy21tz7HLO9T2", // FIXME temp hardcode another user ID
+            // matched_uid: "ZsD7vsIYiec5lzITy21tz7HLO9T2", // FIXME temp hardcode another user ID
+            matched_uid: "PgHJehQ0zCg1aoOAaYA40ZmQ23A3",
             chats: [],
-            chat_uid: "one",
+            chat_uid: '',
             content: '',
             readError: null,
             writeError: null
@@ -65,33 +66,7 @@ class Chat extends React.Component {
         this.myRef = React.createRef;
     }
 
-    async componentDidMount(){
-        this.setState ({readError: null});
-        const chatArea = this.myRef.current;
-
-        // First get chatID
-        // try {
-        //     db.ref("Users/" + this.state.user.uid+"chats/" + this.state.matched_uid).on("value", snapshot => {
-        //         this.setState({chat_id: snapshot});
-        //         console.log(snapshot)
-        //     });
-        // } catch (error) {
-        //     this.setState({readError: error.message})
-        // }
-        // const user = firebase.database().ref("Users/"+ this.state.user.uid)
-        // const data = 1234;
-        try{
-        db.ref('users/'+this.state.user.uid+'/chats/').child(this.state.matched_uid).on("value",
-            function(snapshot){
-                // this.setState({ chat_uid : snapshot.val()})
-                console.log(snapshot.val())
-                // this.setState({ chat_uid : snapshot.val()})
-            });
-        } catch(error){
-            // console.log
-            this.setState({readError: error.message})
-        }
-
+    async getMessages() {
         try {
             db.ref("messages/" + this.state.chat_uid+"/").on("value", snapshot => {
                 let chats= [];
@@ -105,6 +80,29 @@ class Chat extends React.Component {
         } catch (error) {
             this.setState({readError: error.message})
         }
+    }
+
+    async getChatID() {
+        try{
+            db.ref('users/'+this.state.user.uid+'/chats/').child(this.state.matched_uid)
+                .once("value").then(
+                    (snapshot) => {
+                if (snapshot.exists){
+                    console.log(snapshot.val());
+                    this.setState({chat_uid : snapshot.val()})
+                    this.getMessages()
+                }
+            })
+        } catch(error){
+            this.setState({readError: error.message});
+        }
+    }
+
+    async componentDidMount(){
+        this.setState ({readError: null});
+        const chatArea = this.myRef.current
+        this.getChatID();
+        this.getMessages();
     }
 
     handleChange(event) {
@@ -138,7 +136,7 @@ class Chat extends React.Component {
                     <div className="chat-area" class="container-fluid" ref={this.myRef}>
                         {this.state.chats.map(chat => {
                             return (
-                                <Message user={this.state.user} chat={chat} />
+                                <Message key={chat.val} user={this.state.user} chat={chat} />
                             )
 
                         })}
