@@ -2,18 +2,12 @@ import React from 'react';
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import {auth} from "../services/firebase";
 import {db} from "../services/firebase"
-import firebase from 'firebase';
-import { textChangeRangeIsUnchanged } from 'typescript';
-
-//FIXME Temp until we have IDs we can fetch
-let names = ['Jane', 'John']
 
 function formatTime(timestamp){
     const d = new Date(timestamp);
     const time = `${d.getDate()}/${(d.getMonth()+1)}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
     return time
 }
-
 
 function Contacts(props){
     return (
@@ -24,7 +18,6 @@ function Contacts(props){
                         // Add Avatar?
                         <button class="link"  
                         key={name}> {name}</button>))
-                        // <Link key={name} to="/convo/${name}">{name}</Link>))
                     }
                 </ul>
             </div>
@@ -92,8 +85,6 @@ class Chat extends React.Component {
                 snapshot.forEach ((snap) => {
                     ids.push(snap.key);
                 })
-                console.log(ids)
-
                 let matches = [];
                 ids.forEach( (userid) => {
                     db.ref("users/"+userid+"/").on("value", snapshot => {
@@ -104,7 +95,6 @@ class Chat extends React.Component {
                 })
 
                 this.setState({matches});
-                console.log(this.state.matches)
             });
         } catch (error) {
             this.setState({readError: error.message})

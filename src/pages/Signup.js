@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {signup, signInWithGoogle} from '../helpers/auth';
+import {auth} from "../services/firebase";
+import {db} from "../services/firebase"
 
 export default class Signup extends Component {
     constructor(props){
@@ -24,6 +26,15 @@ export default class Signup extends Component {
         this.setState({error: ''});
         try {
             await signup(this.state.email, this.state.password);
+            await db.ref("users/" + auth().currentUser.uid ).child({
+                first_name: this.state.first_name,
+                last_name: this.state.last_name,
+                uid: auth().currentUser.uid
+            });
+            // db.ref("users/" + auth().currentUser.uid ).child('first_name').setValue(this.state.first_name);
+            // db.ref("users/" + auth().currentUser.uid ).child('name_name').setValue(this.state.last_name);
+            // db.ref("users/" + auth().currentUser.uid+"/").child('uid').setValue(auth().currentUser);
+
         } catch(error){
             this.setState({error: error.message});
         }
@@ -51,6 +62,14 @@ export default class Signup extends Component {
                         <input placeholder="Password" name="password"
                         onChange={this.handleChange} value={this.state.password}
                         type="password"></input>
+                    </div>
+                    <div>
+                        <input placeholder="First Name" name="first_name" onChange={this.handleChange} value={this.state.first_name}
+                        type="text" class="form-control"></input>
+                    </div>
+                    <div>
+                        <input placeholder="Last Name" name="last_name" onChange={this.handleChange} value={this.state.last_name}
+                        type="text" class="form-control"></input>
                     </div>
                     <div>
                         {this.state.error ? <p>{this.state.error}</p> : null}
