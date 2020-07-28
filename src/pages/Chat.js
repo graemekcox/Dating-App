@@ -93,7 +93,6 @@ class Chat extends React.Component {
                         // matches.push(val.first_name + " " + val.last_name); 
                     });
                 })
-
                 this.setState({matches});
             });
         } catch (error) {
@@ -119,8 +118,8 @@ class Chat extends React.Component {
     async componentDidMount(){
         this.setState ({readError: null});
         const chatArea = this.myRef.current
-        this.get_chatid();
         this.get_matches();
+        this.get_chatid();
     }
 
     handleChange(event) {

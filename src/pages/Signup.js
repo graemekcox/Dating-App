@@ -26,15 +26,11 @@ export default class Signup extends Component {
         this.setState({error: ''});
         try {
             await signup(this.state.email, this.state.password);
-            await db.ref("users/" + auth().currentUser.uid ).child({
+            db.ref("users/" + auth().currentUser.uid ).set({
                 first_name: this.state.first_name,
                 last_name: this.state.last_name,
                 uid: auth().currentUser.uid
             });
-            // db.ref("users/" + auth().currentUser.uid ).child('first_name').setValue(this.state.first_name);
-            // db.ref("users/" + auth().currentUser.uid ).child('name_name').setValue(this.state.last_name);
-            // db.ref("users/" + auth().currentUser.uid+"/").child('uid').setValue(auth().currentUser);
-
         } catch(error){
             this.setState({error: error.message});
         }
