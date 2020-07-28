@@ -46,34 +46,35 @@ export default class Signup extends Component {
 
     render () {
         return (
-            <div>
+            <div class="text-center">
                 <form onSubmit={this.handleSubmit}>
-                    <h1> Sign up</h1>
+                    <h1 class="h3 mb-3 font-weight-normal"> Sign up</h1>
                     <p>Fill in the below form with your credentials</p>
-                    <div>
-                        <input placeholder="Email" name="email" onChange={this.handleChange} value={this.state.email}
-                        type="email"></input>
+                    <div class="my-2">
+                        <input id="inputEmail" name="email" class="form-control" type="email"
+                        placeholder="Email address" onChange={this.handleChange.bind(this)} value={this.state.email} required></input>
+                        <small>Your email won't be shared</small>
                     </div>
-                    <div>
-                        <input placeholder="Password" name="password"
-                        onChange={this.handleChange} value={this.state.password}
-                        type="password"></input>
+
+                    <div class="my-2">
+                        <input id="inputPassword" name="password" class="form-control" type="password"
+                        placeholder="Password" onChange={this.handleChange.bind(this)} value={this.state.password} required></input>
                     </div>
-                    <div>
+                    <div class="my-2">
                         <input placeholder="First Name" name="first_name" onChange={this.handleChange} value={this.state.first_name}
-                        type="text" class="form-control"></input>
+                        type="text" class="form-control" required></input>
                     </div>
-                    <div>
+                    <div class="my-2">
                         <input placeholder="Last Name" name="last_name" onChange={this.handleChange} value={this.state.last_name}
-                        type="text" class="form-control"></input>
+                        type="text" class="form-control" required></input>
                     </div>
                     <div>
                         {this.state.error ? <p>{this.state.error}</p> : null}
-                        <button type="submit">Sign up</button>
+                        <button class="btn btn-lg btn-primary" type="submit">Sign up</button>
                     </div>
                     <p>Or</p>
-                    <button onClick={this.googleSignIn} type="button">
-                        Sign up with Google
+                    <button class="btn btn-lg btn-primary" type="button" onClick={this.googleSignIn}>
+                        Sign in with Google
                     </button>
                     <hr></hr>
                     <p>Already have an accout? <Link to="/login"> Login</Link></p>

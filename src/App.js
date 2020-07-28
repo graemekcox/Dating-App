@@ -28,7 +28,7 @@ function Settings(){
 
 function Sidebar (){  
   return (
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar border-right">
+    <nav class="col-md-2 d-none d-md-block bg-light border-rightsidebar">
       <div class="sidebar-sticky">
         <ul class="nav flex-column">
           <li class="nav-item">
@@ -149,7 +149,7 @@ class App extends React.Component {
                     <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>
                     <Route path="/help" component={Help}/>
                     <Route path="/settings" component={Settings}></Route>
-                    <Route exact path="/" Component={Profile}></Route>
+                    {/* <Route exact path="/" Component={Profile}></Route> */}
                     <PublicRoute path="/login" 
                     authenticated={this.state.authenticated} component={Login}/>
                     <PublicRoute path="/signup" authenticated={this.state.authenticated} component={Signup}/>

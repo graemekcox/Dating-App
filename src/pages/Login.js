@@ -15,6 +15,7 @@ export default class Login extends Component {
         this.googleSignIn = this.googleSignIn.bind(this);
     }
     handleChange(event) {
+        console.log(event.target.name, event.target.value)
         this.setState({
             [event.target.name]: event.target.value
         });
@@ -40,25 +41,25 @@ export default class Login extends Component {
 
     render () {
         return (
-            <div>
-                <form autoComplete="off" onSubmit={this.handleSubmit}>
-                    <h1> Sign in</h1>
+            <div class="text-center">
+                <form autoComplete="off" class="form-signin" onSubmit={this.handleSubmit}>
+                    <h1 class="h3 mb-3 font-weight-normal"> Please sign in</h1>
                     <p>Fill in the below form with your credentials</p>
-                    <div>
-                        <input placeholder="Email" name="email" onChange={this.handleChange} value={this.state.email}
-                        type="email"></input>
+                    <div class="my-2">
+                        <input id="inputEmail" name="email" class="form-control" type="email"
+                        placeholder="Email address" onChange={this.handleChange.bind(this)} value={this.state.email}></input>
+                        <small>Your email won't be shared</small>
                     </div>
-                    <div>
-                        <input placeholder="Password" name="password"
-                        onChange={this.handleChange} value={this.state.password}
-                        type="password"></input>
+                    <div class="my-2">
+                        <input id="inputPassword" name="password" class="form-control" type="password"
+                        placeholder="Password" onChange={this.handleChange.bind(this)} value={this.state.password}></input>
                     </div>
-                    <div>
+                    <div class="my-3">
                         {this.state.error ? <p>{this.state.error}</p> : null}
-                        <button type="submit">Login</button>
+                        <button class="btn btn-lg btn-primary" type="submit">Login</button>
                     </div>
                     <p>Or</p>
-                    <button type="button" onClick={this.googleSignIn}>
+                    <button class="btn btn-lg btn-primary" type="button" onClick={this.googleSignIn}>
                         Sign in with Google
                     </button>
                     <hr></hr>
