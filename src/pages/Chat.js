@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import {auth} from "../services/firebase";
 import {db} from "../services/firebase"
+import { parseConfigFileTextToJson } from 'typescript';
 
 function formatTime(timestamp){
     const d = new Date(timestamp);
@@ -9,20 +10,31 @@ function formatTime(timestamp){
     return time
 }
 
-function Contacts(props){
-    return (
-        <nav class="col-md-2 bg-light sidebar border-right border-left container-fluid">
-            <div class="sidebar-sticky">
-                <ul class="nav flex-column">
-                    {props.names.map( (name) => (
-                        // Add Avatar?
-                        <button class="link"  
-                        key={name}> {name}</button>))
-                    }
-                </ul>
-            </div>
-        </nav>
-    );
+class Contacts extends React.Component{
+    constructor(props) {
+        super(props);
+        this.onClick = this.onClick.bind(this);
+    }
+
+    onClick(event, uid) {
+        this.props.update_match( uid)
+    }
+    render() {
+        return (
+            <nav class="col-md-2 bg-light sidebar border-right border-left container-fluid">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        {this.props.names.map( (name, index) => (
+                            // Add Avatar?
+                            // <div class="link" key={index}  onClick={e => this.onClick(e, this.props.ids[index])}
+                            <div class="link" key={index}  onClick={e => this.onClick(e, this.props.ids[index])}
+                            > {name}</div>))
+                        }
+                    </ul>
+                </div>
+            </nav>
+        );
+    }
 }
 
 function Message(props){
@@ -48,9 +60,10 @@ class Chat extends React.Component {
         super(props);
         this.state = {
             user: auth().currentUser,
-            // matched_uid: "ZsD7vsIYiec5lzITy21tz7HLO9T2", // FIXME temp hardcode another user ID
-            matched_uid: "PgHJehQ0zCg1aoOAaYA40ZmQ23A3",
+            matched_uid: '', // FIXME temp hardcode another user ID
+            // matched_uid: "PgHJehQ0zCg1aoOAaYA40ZmQ23A3",
             matches: [],
+            match_ids: [],
             chats: [],
             chat_uid: '',
             content: '',
@@ -59,7 +72,16 @@ class Chat extends React.Component {
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.update_match = this.update_match.bind(this);
         this.myRef = React.createRef;
+    }
+
+     update_match(matched_uid) {
+        this.setState({matched_uid})
+        console.log(this.state.matched_uid)
+        console.log(this.state.chat_uid)
+        this.get_chatid()
+        
     }
 
     async get_messages() {
@@ -90,10 +112,12 @@ class Chat extends React.Component {
                     db.ref("users/"+userid+"/").on("value", snapshot => {
                         let val = snapshot.val();
                         matches.push(val.first_name)
-                        // matches.push(val.first_name + " " + val.last_name); 
                     });
                 })
+                this.setState({match_ids: ids})
                 this.setState({matches});
+                this.setState({matched_uid: ids[0]}) // Default to show first listed MATCH ID
+                this.get_chatid();
             });
         } catch (error) {
             this.setState({readError: error.message})
@@ -119,7 +143,6 @@ class Chat extends React.Component {
         this.setState ({readError: null});
         const chatArea = this.myRef.current
         this.get_matches();
-        this.get_chatid();
     }
 
     handleChange(event) {
@@ -148,7 +171,7 @@ class Chat extends React.Component {
     render() {
         return (
             <div class="row">
-                <Contacts names ={this.state.matches}/>   
+                <Contacts update_match={this.update_match} names ={this.state.matches} ids={this.state.match_ids}/>   
                 <div class="border col-md-10 dml-sm-auto col-lg-10 pt-3 px-4 container-fluid">
                     <div className="chat-area" class="container-fluid" ref={this.myRef}>
                         {this.state.chats.map(chat => {
@@ -177,58 +200,5 @@ class Chat extends React.Component {
         )
     }
 }
-
-// class Chat extends React.Component{
-//     constructor(props){
-//         super(props);
-//         // ID of other person, so photo can be displayed
-//       }
-
-//       render() {
-//           return (
-//               <Router>
-//             <div class="container-fluid">
-//                 <Contacts/>
-//                 <main class="col-md-10 ml-sm-auto col-lg-10 px-4" role="main">
-//                     {/* <Chatlog/> */}
-//                     {/* <div class="conversation_active">
-//                         <img src="" alt="placeholder"/>
-//                         <div class="title-text">John Doe</div>
-//                         <div class="conversation-msg">This is a message</div>
-//                     </div> */}
-//                     <div id="chat-title">
-//                         <h1> John Doe</h1>
-//                     </div>
-//                     {/* <div id="chat-msg-list bg-primary">
-//                         <div class="message-row">
-//                             <div class="message-text text-left"> Hello</div>
-//                         </div>
-//                         <div class="message-row">
-//                             <div class="message-text text-right"> Hey</div>
-//                         </div>
-//                         <div class="message-row">
-//                             <div class="message-text text-left"> What's up?</div>
-//                         </div>
-//                         <div class="message-row">
-//                             <div class="message-text text-right">Blocked</div>
-//                         </div>
-//                     </div> */}
-//                     <Chatlog/>
-//                     <footer>
-//                         <div class="form-group">
-//                             {/* <label for="message-input">Send Message</label> */}
-//                             <input class="form-control" id="message-input"
-//                             aria-describedby="messageForm" placeholder="Send a message?"></input>
-//                             <small class="form-text text-muted">They seem like they want to talk</small>
-//                             <button type="submit" class="btn btn-primary mb-2">Send</button>
-//                         </div>
-//                     </footer>
-//                 </main>
-
-//             </div>    
-//             </Router>
-//           )
-//       }
-// }
 
 export default Chat
