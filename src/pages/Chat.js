@@ -15,14 +15,16 @@ function formatTime(timestamp){
 }
 
 
-function Contacts(){
+function Contacts(props){
     return (
         <nav class="col-md-2 bg-light sidebar border-right border-left container-fluid">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
-                    {names.map( (name) => (
+                    {props.names.map( (name) => (
                         // Add Avatar?
-                        <Link key={name} to="/convo/${name}">{name}</Link>))
+                        <button class="link"  
+                        key={name}> {name}</button>))
+                        // <Link key={name} to="/convo/${name}">{name}</Link>))
                     }
                 </ul>
             </div>
@@ -55,6 +57,7 @@ class Chat extends React.Component {
             user: auth().currentUser,
             // matched_uid: "ZsD7vsIYiec5lzITy21tz7HLO9T2", // FIXME temp hardcode another user ID
             matched_uid: "PgHJehQ0zCg1aoOAaYA40ZmQ23A3",
+            matches: [],
             chats: [],
             chat_uid: '',
             content: '',
@@ -66,7 +69,7 @@ class Chat extends React.Component {
         this.myRef = React.createRef;
     }
 
-    async getMessages() {
+    async get_messages() {
         try {
             db.ref("messages/" + this.state.chat_uid+"/").on("value", snapshot => {
                 let chats= [];
@@ -82,15 +85,40 @@ class Chat extends React.Component {
         }
     }
 
-    async getChatID() {
+    async get_matches() {
+        try {
+            db.ref("users/"+this.state.user.uid+"/matches/").on("value", snapshot => {
+                let ids = [];
+                snapshot.forEach ((snap) => {
+                    ids.push(snap.key);
+                })
+                console.log(ids)
+
+                let matches = [];
+                ids.forEach( (userid) => {
+                    db.ref("users/"+userid+"/").on("value", snapshot => {
+                        let val = snapshot.val();
+                        matches.push(val.first_name)
+                        // matches.push(val.first_name + " " + val.last_name); 
+                    });
+                })
+
+                this.setState({matches});
+                console.log(this.state.matches)
+            });
+        } catch (error) {
+            this.setState({readError: error.message})
+        }
+    }
+
+    async get_chatid() {
         try{
             db.ref('users/'+this.state.user.uid+'/chats/').child(this.state.matched_uid)
                 .once("value").then(
                     (snapshot) => {
                 if (snapshot.exists){
-                    console.log(snapshot.val());
                     this.setState({chat_uid : snapshot.val()})
-                    this.getMessages()
+                    this.get_messages()
                 }
             })
         } catch(error){
@@ -101,8 +129,8 @@ class Chat extends React.Component {
     async componentDidMount(){
         this.setState ({readError: null});
         const chatArea = this.myRef.current
-        this.getChatID();
-        this.getMessages();
+        this.get_chatid();
+        this.get_matches();
     }
 
     handleChange(event) {
@@ -131,7 +159,7 @@ class Chat extends React.Component {
     render() {
         return (
             <div class="row">
-                <Contacts/>   
+                <Contacts names ={this.state.matches}/>   
                 <div class="border col-md-10 dml-sm-auto col-lg-10 pt-3 px-4 container-fluid">
                     <div className="chat-area" class="container-fluid" ref={this.myRef}>
                         {this.state.chats.map(chat => {
