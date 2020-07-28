@@ -12,3 +12,12 @@ export function signInWithGoogle() {
     const provider = new auth.GoogleAuthProvider();
     return auth().signInWithPopup(provider);
 }
+
+export function signout(){
+    auth().signOut().then(function() {
+        return true // Indicate we successfully signed out
+    }).catch(function(error){
+        console.log(error)
+        return false
+    })
+}
