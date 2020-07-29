@@ -173,6 +173,7 @@ class Chat extends React.Component {
             <div class="row">
                 <Contacts update_match={this.update_match} names ={this.state.matches} ids={this.state.match_ids}/>   
                 <div class="border col-md-10 dml-sm-auto col-lg-10 pt-3 px-4 container-fluid">
+                    <div class="position-relative overflow-hidden p-5 p-md-5">
                     <div className="chat-area" class="container-fluid" ref={this.myRef}>
                         {this.state.chats.map(chat => {
                             return (
@@ -190,6 +191,7 @@ class Chat extends React.Component {
                             >Send</button>
                         </form>
                     {/* </div> */}
+                    </div>
                     <div>
                         Login is as: <strong>{this.state.user.email}</strong>
                     </div>
