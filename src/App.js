@@ -90,7 +90,7 @@ class App extends React.Component {
         <Router>
           <Navbar/>
           <div class="container-fluid">
-            <div class="row">
+            <div class="w-100 d-flex align-items-stretch">
                 <Sidebar/>
                 <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
                   <Switch>
