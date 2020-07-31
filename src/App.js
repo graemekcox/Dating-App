@@ -9,6 +9,7 @@ import Login from './pages/Login.js'
 import Home from './pages/Home.js'
 import Navbar from  './components/Navbar.js'
 import Sidebar from './components/Sidebar.js'
+import styled from 'styled-components';
 import './App.css';
 
 function Profile() {
@@ -53,8 +54,16 @@ function PublicRoute({ component: Component, authenticated, ...rest}) {
     : <Redirect to='/chat' />}
   />
   )
+
+
 }
 
+const AppLayout = styled.div`
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 100px 1fr;
+  grid-template-rows: auto 1fr auto;
+`
 
 class App extends React.Component {
   constructor() {
@@ -86,12 +95,11 @@ class App extends React.Component {
         <span className="sr-only">Loading...</span>
       </div>
     ) : (
-      // <div class="cover-container-fluid">
         <Router>
           <Navbar/>
-          <div class="container-fluid">
             <div class="w-100 d-flex align-items-stretch">
                 <Sidebar/>
+                {/* <div> */}
                 <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
                   <Switch>
                     <Route exact path="/" component={Home}/>
@@ -108,10 +116,7 @@ class App extends React.Component {
                   </Switch>
                 </main>
               </div>
-          </div>   
         </Router>
-      // </div>
-
     )
   }
 }
