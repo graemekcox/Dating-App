@@ -17,8 +17,6 @@ const ProfileSettingsWrapper = styled.div`
     display: inline-block
 `
 
-
-
 export default class Settings extends Component {
     constructor(props) {
         super(props);
@@ -28,7 +26,8 @@ export default class Settings extends Component {
             last_name: '',
             age: '',
             gender: '',
-            orientation: ''
+            orientation: '',
+            writeError: null
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -36,21 +35,19 @@ export default class Settings extends Component {
 
     async handleSubmit(event) {
         event.preventDefault();
-        
-        console.log(this.state)
-        console.log(this.state.user.uid)
-        // console.log(this.state.user.uid)
-        // this.setState({ writeError: null});
-        // try {
-        //     await db.ref("messages/" + this.state.chat_uid+"/").push({
-        //         content: this.state.content,
-        //         timestamp: Date.now(),
-        //         uid: this.state.user.uid
-        //     });
-        //     this.setState({ content: ''});
-        // } catch (error) {
-        //     this.setState({ writeError: error.message});
-        // }
+        this.setState({ writeError: null});
+
+        try{
+            db.ref("users/" + this.state.user.uid ).update({
+                first_name: this.state.first_name,
+                last_name: this.state.last_name,
+                age: this.state.age,
+                gender: this.state.gender,
+                orientation: this.state.orientation
+            });
+        } catch(error){
+            this.setState({ writeError: error.message})
+        }
     }
 
     handleChange(event) {
@@ -92,7 +89,6 @@ export default class Settings extends Component {
                                     <option value='' selected disabled hidden >Please choose...</option>
                                     {valid_ages.map((value, i) =>
                                         <option key={value}>{value}</option>)}
-                
                                 </select>
                             </div>
                             <div class="col-auto mx-2">
