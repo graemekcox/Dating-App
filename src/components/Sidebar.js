@@ -8,38 +8,6 @@ import {signout} from '../helpers/auth';
 const primary = '#3e64ff';
 const white = '#ffffff';
 
-const StyledSide = styled.nav`
-    background: ${primary};
-    min-width: 150px;
-    max-width: 150px;
-    color: #000000;
-
-    ul.components{
-        padding: 0;
-        @include transition(.3s);
-    }
-    ul{
-        li{
-            font-size: 16px;
-            >ul{
-                margin-left: 10px;
-                li{
-                    font-size: 14px;
-                }
-            }
-            a {
-                display: block;
-                padding: 10px 30px;
-                border-bottom: 1px solid grey;
-                color: #ffffff;
-                font-size: 16px;
-                .link {
-                    margin-right: 15px;
-                }
-        }
-    }
-`
-
 const ChatWrapper = styled.div`
     grid-column: 1;
     grid-row: 1/4;

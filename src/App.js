@@ -9,7 +9,6 @@ import Login from './pages/Login.js'
 import Home from './pages/Home.js'
 import Settings from './pages/Settings.js'
 import Sidebar from './components/Sidebar.js'
-import styled from 'styled-components';
 import './App.css';
 
 // This helps block routes that requir athentication
@@ -41,13 +40,6 @@ function PublicRoute({ component: Component, authenticated, ...rest}) {
 
 
 }
-
-const AppLayout = styled.div`
-  display: grid;
-  height: 100vh;
-  grid-template-columns: 100px 1fr;
-  grid-template-rows: auto 1fr auto;
-`
 
 class App extends React.Component {
   constructor() {
