@@ -1,8 +1,6 @@
 import React from 'react';
-import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import {auth} from "../services/firebase";
 import {db} from "../services/firebase"
-import { parseConfigFileTextToJson } from 'typescript';
 
 function formatTime(timestamp){
     const d = new Date(timestamp);

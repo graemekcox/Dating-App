@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Link, Route, Switch, Redirect} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
 import Person from './components/Person.js'
 import Chat from './pages/Chat.js'
 import {auth} from './services/firebase';
@@ -7,26 +7,10 @@ import Signup from './pages/Signup.js'
 import Help from './pages/Help.js'
 import Login from './pages/Login.js'
 import Home from './pages/Home.js'
-import Navbar from  './components/Navbar.js'
+import Settings from './pages/Settings.js'
 import Sidebar from './components/Sidebar.js'
 import styled from 'styled-components';
 import './App.css';
-
-function Profile() {
-  return (
-    <div>
-      <h1> This is your profile</h1>
-    </div>
-  )
-}
-
-function Settings(){
-  return(
-    <section class="text-center">
-      <h1>TBD</h1>
-    </section>
-  )
-}
 
 // This helps block routes that requir athentication
 function PrivateRoute({ component: Component, authenticated, ...rest }) {
@@ -106,11 +90,9 @@ class App extends React.Component {
                   authenticated={this.state.authenticated} 
                   component={Chat}/>
                   <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>
-                  <Route path="/help" component={Help}/>
-                  <Route path="/settings" component={Settings}></Route>
-                  {/* <Route exact path="/" Component={Profile}></Route> */}
-                  <PublicRoute path="/login" 
-                  authenticated={this.state.authenticated} component={Login}/>
+                  <PublicRoute path="/help" component={Help}/>
+                  <PrivateRoute path="/settings" authenticated={this.state.authenticated} component={Settings}/>
+                  <PublicRoute path="/login"  authenticated={this.state.authenticated} component={Login}/>
                   <PublicRoute path="/signup" authenticated={this.state.authenticated} component={Signup}/>
                 </Switch>
               </main>

@@ -1,6 +1,6 @@
 import React from 'react';
-import {NavLink, Link} from 'react-router-dom';
-import {FiSearch, FiMessageCircle, FiSettings,FiHelpCircle} from "react-icons/fi";
+import {NavLink} from 'react-router-dom';
+import {FiMessageCircle, FiSettings} from "react-icons/fi";
 import {FaSearch, FaHeart,  FaSignOutAlt, FaRegQuestionCircle} from 'react-icons/fa'
 import styled from 'styled-components';
 import {signout} from '../helpers/auth';
@@ -35,9 +35,7 @@ const StyledSide = styled.nav`
                 font-size: 16px;
                 .link {
                     margin-right: 15px;
-
                 }
-
         }
     }
 `
@@ -56,6 +54,7 @@ const AppNameHeader = styled.h1`
   color: #fff;
   padding-left: 10px;
   font-size: 20px;
+  padding-top: 10px;
 `;
 
 const SideBarList = styled.ul`
@@ -66,7 +65,7 @@ const SideBarList = styled.ul`
 `;
 
 const SideBarLink = styled(NavLink)`
-    color: black;
+    color: white;
 
     &.active {
         color: black;
@@ -81,6 +80,7 @@ const SideBarListItem = styled.li`
     padding: 2px;
     font-size: 16px;
     padding: 20px 20px;
+    color: white;
     padding-left: 20px;
     &:hover {
         background: ${white};
@@ -107,7 +107,7 @@ const side_item = ({name, path}) => (
     <SideBarListItem>
         <FaSearch/>
         <SideBarLink style={{ textDecoration: 'none'}} class='link' to={path}>{name}</SideBarLink>             
-</SideBarListItem>
+    </SideBarListItem>
 );
 
 export default class Sidebar extends React.Component {
@@ -136,7 +136,8 @@ export default class Sidebar extends React.Component {
                         </SideBarListItem>
                         <SideBarListItem>
                             <FaRegQuestionCircle class="mr-2"/>
-                            <SideBarLink class='link' to="/help">Help</SideBarLink>
+                            <SideBarLink style={{color: 'white', textDecoration: 'none'}}
+                            class='link' to="/help">Help</SideBarLink>
                         </SideBarListItem>
                         <SideBarListItem>
                             <FaSignOutAlt class="mr-2"/>
