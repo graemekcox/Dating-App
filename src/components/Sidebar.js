@@ -1,12 +1,9 @@
 import React from 'react';
 import {NavLink, Link} from 'react-router-dom';
 import {FiSearch, FiMessageCircle, FiSettings,FiHelpCircle} from "react-icons/fi";
+import {FaSearch, FaHeart,  FaSignOutAlt, FaRegQuestionCircle} from 'react-icons/fa'
 import styled from 'styled-components';
-
-// const Section = styled.section`
-//     color: white;
-//     background: blue
-// `
+import {signout} from '../helpers/auth';
 
 const primary = '#3e64ff';
 const white = '#ffffff';
@@ -108,7 +105,7 @@ const user = ({ id, name }) => (
 
 const side_item = ({name, path}) => (
     <SideBarListItem>
-        <FiSearch/>
+        <FaSearch/>
         <SideBarLink style={{ textDecoration: 'none'}} class='link' to={path}>{name}</SideBarLink>             
 </SideBarListItem>
 );
@@ -121,49 +118,33 @@ export default class Sidebar extends React.Component {
         return(
             <div>
                 <ChatWrapper>
-                    <AppNameHeader>Dating App</AppNameHeader>
+                    <a class="" href="/">
+                        <AppNameHeader><FaHeart class="mr-2"/>Dating App</AppNameHeader>
+                    </a>
                     <SideBarList>
                         <SideBarListItem>
-                            <FiSearch/>
+                            <FaSearch class="mr-2"/>
                             <SideBarLink style={{ textDecoration: 'none'}} class='link' to='/match'>Match</SideBarLink>             
                         </SideBarListItem>
                         <SideBarListItem>
-                                <FiMessageCircle/>
+                                <FiMessageCircle class="mr-2"/>
                                 <SideBarLink style={{ textDecoration: 'none'}} class='link' to='/chat'>Chat</SideBarLink>
                         </SideBarListItem>
                         <SideBarListItem>
-                            <FiSettings/>
+                            <FiSettings class="mr-2"/>
                             <SideBarLink style={{ textDecoration: 'none'}} class="link" to="/settings">Settings</SideBarLink>
                         </SideBarListItem>
                         <SideBarListItem>
-                            <FiHelpCircle class="ml-2"/>
+                            <FaRegQuestionCircle class="mr-2"/>
                             <SideBarLink class='link' to="/help">Help</SideBarLink>
                         </SideBarListItem>
-                        {/* {side_item("Match", '/')} */}
+                        <SideBarListItem>
+                            <FaSignOutAlt class="mr-2"/>
+                            <SideBarLink onClick={()=> signout()} class='signout' to="#">Signout</SideBarLink>
+                        </SideBarListItem>
                     </SideBarList>
                 </ChatWrapper>
-                {/* <ChatWrapper>
-                    <AppNameHeader>Dating App</AppNameHeader>
-                    {username}
-                    <div>
-                        <SideBarList>
-                            <SideBarListHeader>Channels</SideBarListHeader>
-                            <SideBarListItem>
-                                <FiHelpCircle class="ml-2"/>
-                                <Link style={{ textDecoration: 'none'}} class='link' to="/help">Help</Link>
-                            </SideBarListItem>
-                            {channels.map(channel)}
-                        </SideBarList>
-                    </div>
-                    <div>
-                    <SideBarList>
-                        <SideBarListHeader>Direct Messages</SideBarListHeader>
-                        {users.map(user)}
-                    </SideBarList>
-                    </div>
-                </ChatWrapper> */}
             </div>
-
         )
     }
 }

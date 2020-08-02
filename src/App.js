@@ -96,26 +96,25 @@ class App extends React.Component {
       </div>
     ) : (
         <Router>
-          <Navbar/>
-            <div class="w-100 d-flex align-items-stretch">
-                <Sidebar/>
-                {/* <div> */}
-                <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
-                  <Switch>
-                    <Route exact path="/" component={Home}/>
-                    <PrivateRoute path="/chat"  
-                    authenticated={this.state.authenticated} 
-                    component={Chat}/>
-                    <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>
-                    <Route path="/help" component={Help}/>
-                    <Route path="/settings" component={Settings}></Route>
-                    {/* <Route exact path="/" Component={Profile}></Route> */}
-                    <PublicRoute path="/login" 
-                    authenticated={this.state.authenticated} component={Login}/>
-                    <PublicRoute path="/signup" authenticated={this.state.authenticated} component={Signup}/>
-                  </Switch>
-                </main>
-              </div>
+          <div class="w-100 d-flex align-items-stretch">
+              <Sidebar/>
+              {/* <div> */}
+              <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
+                <Switch>
+                  <Route exact path="/" component={Home}/>
+                  <PrivateRoute path="/chat"  
+                  authenticated={this.state.authenticated} 
+                  component={Chat}/>
+                  <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>
+                  <Route path="/help" component={Help}/>
+                  <Route path="/settings" component={Settings}></Route>
+                  {/* <Route exact path="/" Component={Profile}></Route> */}
+                  <PublicRoute path="/login" 
+                  authenticated={this.state.authenticated} component={Login}/>
+                  <PublicRoute path="/signup" authenticated={this.state.authenticated} component={Signup}/>
+                </Switch>
+              </main>
+            </div>
         </Router>
     )
   }
