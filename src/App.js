@@ -10,6 +10,7 @@ import Home from './pages/Home.js'
 import Settings from './pages/Settings.js'
 import Sidebar from './components/Sidebar.js'
 import './App.css';
+import Contacts from './components/Contacts.js';
 
 // This helps block routes that requir athentication
 function PrivateRoute({ component: Component, authenticated, ...rest }) {
@@ -74,11 +75,12 @@ class App extends React.Component {
         <Router>
           <div class="w-100 d-flex align-items-stretch">
               <Sidebar/>
+              <Contacts/>
               {/* <div> */}
               <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
                 <Switch>
                   <Route exact path="/" component={Home}/>
-                  <PrivateRoute path="/chat"  
+                  <PrivateRoute path="/chat/:uid"  
                   authenticated={this.state.authenticated} 
                   component={Chat}/>
                   <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>

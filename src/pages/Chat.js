@@ -2,37 +2,11 @@ import React from 'react';
 import {auth} from "../services/firebase";
 import {db} from "../services/firebase"
 
+
 function formatTime(timestamp){
     const d = new Date(timestamp);
     const time = `${d.getDate()}/${(d.getMonth()+1)}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
     return time
-}
-
-class Contacts extends React.Component{
-    constructor(props) {
-        super(props);
-        this.onClick = this.onClick.bind(this);
-    }
-
-    onClick(event, uid) {
-        this.props.update_match( uid)
-    }
-    render() {
-        return (
-            <nav class="col-md-2 bg-light sidebar border-right border-left container-fluid">
-                <div class="sidebar-sticky">
-                    <ul class="nav flex-column">
-                        {this.props.names.map( (name, index) => (
-                            // Add Avatar?
-                            // <div class="link" key={index}  onClick={e => this.onClick(e, this.props.ids[index])}
-                            <div class="link" key={index}  onClick={e => this.onClick(e, this.props.ids[index])}
-                            > {name}</div>))
-                        }
-                    </ul>
-                </div>
-            </nav>
-        );
-    }
 }
 
 function Message(props){
@@ -58,33 +32,32 @@ class Chat extends React.Component {
         super(props);
         this.state = {
             user: auth().currentUser,
-            matched_uid: '', // FIXME temp hardcode another user ID
+            matched_uid: 'test',  // FIXME temp hardcode another user ID
             // matched_uid: "PgHJehQ0zCg1aoOAaYA40ZmQ23A3",
-            matches: [],
-            match_ids: [],
             chats: [],
             chat_uid: '',
             content: '',
             readError: null,
-            writeError: null
+            writeError: null,
+            isMounted: false
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.update_match = this.update_match.bind(this);
+        // this.update_match = this.update_match.bind(this);
         this.myRef = React.createRef;
     }
 
-     update_match(matched_uid) {
-        this.setState({matched_uid})
-        console.log(this.state.matched_uid)
-        console.log(this.state.chat_uid)
-        this.get_chatid()
+    //  update_match(matched_uid) {
+    //     this.setState({matched_uid})
+    //     console.log(this.state.matched_uid)
+    //     console.log(this.state.chat_uid)
+    //     this.get_chatid()
         
-    }
+    // }
 
     async get_messages() {
         try {
-            db.ref("messages/" + this.state.chat_uid+"/").on("value", snapshot => {
+            await db.ref("messages/" + this.state.chat_uid+"/").on("value", snapshot => {
                 let chats= [];
                 snapshot.forEach ((snap) => {
                     chats.push(snap.val());
@@ -98,37 +71,14 @@ class Chat extends React.Component {
         }
     }
 
-    async get_matches() {
-        try {
-            db.ref("users/"+this.state.user.uid+"/matches/").on("value", snapshot => {
-                let ids = [];
-                snapshot.forEach ((snap) => {
-                    ids.push(snap.key);
-                })
-                let matches = [];
-                ids.forEach( (userid) => {
-                    db.ref("users/"+userid+"/").on("value", snapshot => {
-                        let val = snapshot.val();
-                        matches.push(val.first_name)
-                    });
-                })
-                this.setState({match_ids: ids})
-                this.setState({matches});
-                this.setState({matched_uid: ids[0]}) // Default to show first listed MATCH ID
-                this.get_chatid();
-            });
-        } catch (error) {
-            this.setState({readError: error.message})
-        }
-    }
-
     async get_chatid() {
         try{
-            db.ref('users/'+this.state.user.uid+'/chats/').child(this.state.matched_uid)
+            await db.ref('users/'+this.state.user.uid+'/chats/').child(this.state.matched_uid)
                 .once("value").then(
                     (snapshot) => {
                 if (snapshot.exists){
                     this.setState({chat_uid : snapshot.val()})
+                    // console.log(this.state.user.uid, this.state.matched_uid, snapshot.val());
                     this.get_messages()
                 }
             })
@@ -137,10 +87,26 @@ class Chat extends React.Component {
         }
     }
 
+    // When a new URL is linked, then we need to update matched_id based on the props
+    async componentWillReceiveProps(nextProps) {
+        const {uid} = await nextProps.match.params;
+        this.setState({matched_uid: uid});
+        this.get_chatid()
+
+    }
+
     async componentDidMount(){
-        this.setState ({readError: null});
+        this.setState ({
+            readError: null,
+            isMounted: true
+        });
         const chatArea = this.myRef.current
-        this.get_matches();
+
+        const {uid} = this.props.match.params;
+        this.setState({matched_uid: uid});
+
+        this.get_chatid();
+
     }
 
     handleChange(event) {
@@ -148,6 +114,7 @@ class Chat extends React.Component {
             content: event.target.value
         })
     }
+
 
     async handleSubmit(event) {
         event.preventDefault();
@@ -167,15 +134,16 @@ class Chat extends React.Component {
 
 
     render() {
+
         return (
             <div class="row">
-                <Contacts update_match={this.update_match} names ={this.state.matches} ids={this.state.match_ids}/>   
+                {/* <Contacts update_match={this.update_match} names ={this.state.matches} ids={this.state.match_ids}/>    */}
                 <div class="border col-md-10 dml-sm-auto col-lg-10 pt-3 px-4 container-fluid">
                     <div class="position-relative overflow-hidden p-5 p-md-5">
                     <div className="chat-area" class="container-fluid" ref={this.myRef}>
-                        {this.state.chats.map(chat => {
+                        {this.state.chats.map((chat,ind) => {
                             return (
-                                <Message key={chat.val} user={this.state.user} chat={chat} />
+                                <Message key={ind} id={this.state.matched_uid} user={this.state.user} chat={chat} />
                             )
 
                         })}

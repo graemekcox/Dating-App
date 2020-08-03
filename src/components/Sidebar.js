@@ -8,7 +8,7 @@ import {signout} from '../helpers/auth';
 const primary = '#3e64ff';
 const white = '#ffffff';
 
-const ChatWrapper = styled.div`
+const SideBarWrapper = styled.div`
     grid-column: 1;
     grid-row: 1/4;
     background-color: ${primary};
@@ -85,7 +85,7 @@ export default class Sidebar extends React.Component {
         // const users = ["Susie"];
         return(
             <div>
-                <ChatWrapper>
+                <SideBarWrapper>
                     <a class="" href="/">
                         <AppNameHeader><FaHeart class="mr-2"/>Dating App</AppNameHeader>
                     </a>
@@ -112,7 +112,7 @@ export default class Sidebar extends React.Component {
                             <SideBarLink onClick={()=> signout()} class='signout' to="#">Signout</SideBarLink>
                         </SideBarListItem>
                     </SideBarList>
-                </ChatWrapper>
+                </SideBarWrapper>
             </div>
         )
     }
