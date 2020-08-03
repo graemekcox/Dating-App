@@ -1,7 +1,7 @@
 import React from 'react';
 import {auth} from "../services/firebase";
 import {db} from "../services/firebase"
-
+import styled from 'styled-components';
 
 function formatTime(timestamp){
     const d = new Date(timestamp);
@@ -9,20 +9,105 @@ function formatTime(timestamp){
     return time
 }
 
+const MessageBubble = styled.div`
+
+    display: flex;
+    flex-direction: column;
+
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-size: 25px;
+    max-width: 600px;
+    margin: 50px auto;
+    display: flex;
+
+`
+
+const MessageContent_Match = styled.p`
+    max-width: 255px;
+    word-wrap: break-word;
+    margin-bottom: 12px;
+    line-height: 24px;
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 25px;
+    background:#E5E5EA;
+	color:black;
+		
+	&:before {
+        position: absolute;
+        content: "";
+        bottom: -2px;
+        height: 20px;
+		left:-7px;
+		border-left:20px solid #E5E5EA;
+		border-bottom-right-radius: 16px 14px;
+		transform:translate(0, -2px);
+	}
+
+	&:after {
+        position: absolute;
+        content: "";
+        bottom: -2px;
+        height: 20px;
+		left:4px;
+		width:26px;
+		background:white;
+		border-bottom-right-radius: 10px;
+		transform:translate(-30px, -2px);
+	}
+`
+
+const MessageContent_User = styled.p`
+    max-width: 255px;
+    word-wrap: break-word;
+    margin-bottom: 12px;
+    line-height: 24px;
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 25px;
+	color:white; 
+	background:#0B93F6;
+	align-self: flex-end;
+		
+	&:before {
+		right:-7px;
+		border-right:20px solid #0B93F6;
+		border-bottom-left-radius: 16px 14px;
+        transform:translate(0, -2px);
+        position: absolute;
+        content: "";
+        bottom: -2px;
+        height: 20px;
+	}
+
+	&:after {
+		right:-56px;
+		width:26px;
+		background:white;
+		border-bottom-left-radius: 10px;
+        transform:translate(-30px, -2px);
+        position: absolute;
+        content: "";
+        bottom: -2px;
+        height: 20px;
+	}
+
+`
+
+
 function Message(props){
+
     return (
         <div class="container-fluid mb-2 rounded">
-            <div class={((props.user.uid === props.chat.uid) ? 
-                "offset-md-8 bg-primary  "
-             :  "bg-success ") + "w-25 p-3 col-md-6 text-right rounded"}>
-            <p key={props.chat.timestamp} className={"chat-bubble " + (props.user.uid === props.chat.uid ? 
-                "current-user" : "")}
-                >
-                {props.chat.content}
-                <br/>
+            <MessageBubble user_uid={props.user.uid} chat_uid={props.chat.uid}>
+                {(props.user.uid === props.chat.uid) ? (
+                    <MessageContent_User>{props.chat.content}</MessageContent_User>
+                ) : (
+                    <MessageContent_Match>{props.chat.content}</MessageContent_Match>
+                )}
+                {/* <br/> */}
                 {/* <span className="chat-time float-right">{formatTime(props.chat.timestamp)}</span> */}
-            </p>
-            </div>
+            </MessageBubble>
         </div>
     );
 }
@@ -32,8 +117,7 @@ class Chat extends React.Component {
         super(props);
         this.state = {
             user: auth().currentUser,
-            matched_uid: 'test',  // FIXME temp hardcode another user ID
-            // matched_uid: "PgHJehQ0zCg1aoOAaYA40ZmQ23A3",
+            matched_uid: '',
             chats: [],
             chat_uid: '',
             content: '',
@@ -46,14 +130,6 @@ class Chat extends React.Component {
         // this.update_match = this.update_match.bind(this);
         this.myRef = React.createRef;
     }
-
-    //  update_match(matched_uid) {
-    //     this.setState({matched_uid})
-    //     console.log(this.state.matched_uid)
-    //     console.log(this.state.chat_uid)
-    //     this.get_chatid()
-        
-    // }
 
     async get_messages() {
         try {
@@ -104,7 +180,6 @@ class Chat extends React.Component {
 
         const {uid} = this.props.match.params;
         this.setState({matched_uid: uid});
-
         this.get_chatid();
 
     }
@@ -138,26 +213,27 @@ class Chat extends React.Component {
         return (
             <div class="row">
                 {/* <Contacts update_match={this.update_match} names ={this.state.matches} ids={this.state.match_ids}/>    */}
-                <div class="border col-md-10 dml-sm-auto col-lg-10 pt-3 px-4 container-fluid">
+                <div class="container-fluid  vh-100">
                     <div class="position-relative overflow-hidden p-5 p-md-5">
-                    <div className="chat-area" class="container-fluid" ref={this.myRef}>
-                        {this.state.chats.map((chat,ind) => {
-                            return (
-                                <Message key={ind} id={this.state.matched_uid} user={this.state.user} chat={chat} />
-                            )
+                        <div className="chat-area" class="h-80 p-3" ref={this.myRef}>
+                            {this.state.chats.map((chat,ind) => {
+                                return (
+                                    <Message key={ind} id={this.state.matched_uid} user={this.state.user} chat={chat} />
+                                )
 
-                        })}
-                    </div>
-                    {/* <div class="form-inline mb-mr-2 mr-4"> */}
-                        <form class="form-inline mb-2 mr-4" onSubmit={this.handleSubmit}>
-                            <input class="ml-4 mb-2 container-fluid"
-                                onChange={this.handleChange} value={this.state.content}/>
-                                {this.state.error ? <p>{this.state.writeError}</p> : null}
-                            <button type="submit" class="btn ml-4 btn-primary"
-                            >Send</button>
+                            })}
+                        </div>
+                        <form class="form-inline justify-content-center" onSubmit={this.handleSubmit}>
+                            <div class="form-group col-sm-8">
+                                <input class="form-control w-100"
+                                    onChange={this.handleChange} value={this.state.content}/>
+                                    {this.state.error ? <p>{this.state.writeError}</p> : null}
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <button type="submit" class="btn ml-4 btn-primary">Send</button>
+                            </div>
                         </form>
-                    {/* </div> */}
-                    </div>
+                        </div>
                     <div>
                         Login is as: <strong>{this.state.user.email}</strong>
                     </div>

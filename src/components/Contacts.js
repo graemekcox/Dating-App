@@ -45,27 +45,6 @@ const Contact = styled.div`
         background: blue;
     }
 `
-// class User{
-//     constructor(uid) {
-//         this.get_user_info(uid);
-//     }
-
-//     get_user_info(uid){
-//         try{
-//             db.ref('users/'+this.state.user.uid+'/chats/').child(this.state.matched_uid)
-//                 .once("value").then(
-//                     (snapshot) => {
-//                 if (snapshot.exists){
-//                     this.setState({chat_uid : snapshot.val()})
-//                     this.get_messages()
-//                 }
-//             })
-//         } catch(error){
-//             this.setState({readError: error.message});
-//         }
-//     }
-// }
-
 
 export default class Contacts extends React.Component{
     constructor(props) {
@@ -76,8 +55,6 @@ export default class Contacts extends React.Component{
             matches: [],
             match_ids: []
         }
-
-        this.onClick = this.onClick.bind(this);
     }
 
     async get_matches() {
@@ -109,12 +86,6 @@ export default class Contacts extends React.Component{
         this.get_matches();
     }
 
-
-    onClick(event, uid) {
-        console.log("CLICKED")
-        // this.props.update_match( uid)
-    }
-
     render() {
         return (
             <ContactsWrappper>
@@ -123,13 +94,11 @@ export default class Contacts extends React.Component{
                     {this.state.matches.map ( (name, index) => (
                         <Contact>
                             <ContactListItem key={name+'_'+index}><FaUserCircle/>
-                                {/* <Link to={"/chat/",this.state.match_ids[index]} >{name}</Link> */}
                                 <Link to={{
                                     pathname: '/chat/' + this.state.match_ids[index],
                                     aboutProps:{name:'Info'},
                                     state: {matched_uid: this.state.match_ids[index]}
-                                }
-                                }>{name}</Link>
+                                }}>{name}</Link>
                             </ContactListItem>
                         </Contact>
                     )
