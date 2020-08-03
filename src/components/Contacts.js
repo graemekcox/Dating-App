@@ -18,6 +18,7 @@ const ContactsWrappper = styled.div`
     min-width: 200px;
     max-width: 200px;
     border-left: 5px solid blue;
+    display: ${props => (props.isHidden) ? "none" : "flex"};
 `
 
 const ContactSideList = styled.ul`
@@ -41,6 +42,7 @@ const Contact = styled.div`
     font-size: 20px;
     color: white;
 
+
     &:hover {
         background: blue;
     }
@@ -53,7 +55,8 @@ export default class Contacts extends React.Component{
         this.state = {
             user: auth().currentUser,
             matches: [],
-            match_ids: []
+            match_ids: [],
+            isHidden: false
         }
     }
 
@@ -88,7 +91,7 @@ export default class Contacts extends React.Component{
 
     render() {
         return (
-            <ContactsWrappper>
+            <ContactsWrappper isHidden={this.state.isHidden}>
                 <ContactSideList>
                     <SideBarListHeader>Direct Messages</SideBarListHeader>
                     {this.state.matches.map ( (name, index) => (
