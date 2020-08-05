@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {db} from "../services/firebase"
+import {keyframes} from 'styled-components';
 
 const genders = {
     MALE: 'male',
@@ -40,17 +41,29 @@ function ImageCarousel(){
     );
 }
 
-const CardWrapper = styled.div`
-    display: table;
-  overflow: hidden;
-  padding: 32px;
-  background: ${props => props.bg};
-  margin: 48px auto 0;
-  width: 400px;
-  font-family: Quicksand, arial, sans-serif;
-  box-shadow: 0 0 20px rgba(0, 0, 0, .05), 0 0px 40px rgba(0, 0, 0, .08);
-  border-radius: 5px;
+const  breathanimation = keyframes`
+    0%  {  width: 100px; opacity: 0.1}
+    30% {  width: 200px; opacity: 0.3}
+    60% {  width: 300px; opacity: 0.7}
+    100% { width: 400px; opacity: 1  }
 `
+
+const CardWrapper = styled.div`
+    animation-name: ${breathanimation};
+    animation-duration: 2s;
+    // animation-iteration-count: infinite;
+
+    display: table;
+    overflow: hidden;
+    padding: 32px;
+    background: ${props => props.bg};
+    margin: 48px auto 0;
+    width: 400px;
+    font-family: Quicksand, arial, sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .05), 0 0px 40px rgba(0, 0, 0, .08);
+    border-radius: 5px;
+`
+
 
 const CardHeader = styled.header`
   padding-top: 32px;
