@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import {db} from "../services/firebase"
 
 const genders = {
     MALE: 'male',
@@ -74,48 +75,47 @@ const CardBodyText = styled.p`
 `
 
   class Person extends React.Component{
-      constructor(props){
+    constructor(props){
         super(props);
         this.state = {
-          gender: genders.MALE,
-          age: 25,
-          first_name: "John",
-          last_name: "D"
+            // uid: this.props.uid,
+            uid: 'PgHJehQ0zCg1aoOAaYA40ZmQ23A3'
         }
-      }
+    }
+
+    async get_user_info() {
+        try {
+            await db.ref("users/" + this.state.uid+"/").once("value").then( snapshot => {
+
+                snapshot.forEach ((snap) => {
+                    this.setState( { [snap.key]: snap.val()});
+
+                })
+                console.log(this.state)
+            });
+        } catch (error) {
+            this.setState({readError: error.message})
+        }
+    }
+
+    
+    async componentDidMount() {
+        this.get_user_info();
+    }
+
+
     render() {
       return (
         <div class="">
             {/* <div class="d-flex justify-content-between flex-wrap flex-md-nowrap">
-                <h1 class="h2">John Doe</h1>
-                <div class="btn-group mb-2">
-                    <button class="btn btn-sm btn-outline-secondary">Next!</button>
-                    <button class="btn btn-sm btn-outline-secondary">Like</button>
-                    <button class="btn btn-sm btn-outline-secondary">Superlike</button>
-                </div>
-            </div>
             <div class="row">
                 <ImageCarousel/>
             </div>
-            <div class="row">
-                <div class="col">
-                    <h2 class="text-left">Interests</h2>
-                    <ul class='text-left'>
-                        <li>Hiking</li>
-                        <li>Music</li>
-                    </ul>
-
-                </div>
-                <div class="col">
-                    <h2>About me!</h2>
-                    <h5>{this.state.first_name} {this.state.last_name}</h5>
-                    <h5>Gender = {this.state.gender}</h5>
-                    <h5>Age = {this.state.age}</h5>
-                </div>
             </div> */}
             <CardWrapper bg={this.props.bg}>
                 <CardBody>
-                    <CardBodyText>Music interests</CardBodyText>
+                    <CardBodyText>{this.state.orientation}</CardBodyText>
+                    <CardBodyText>{this.state.gender}</CardBodyText>
                     <CardBodyText>TV interests</CardBodyText>
                     <CardBodyText>Pasta is best</CardBodyText>
                     <CardBodyText>Math major</CardBodyText>

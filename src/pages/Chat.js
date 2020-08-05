@@ -96,7 +96,6 @@ const MessageContent_User = styled.p`
 
 
 function Message(props){
-
     return (
         <div class="container-fluid mb-2 rounded">
             <MessageBubble user_uid={props.user.uid} chat_uid={props.chat.uid}>
