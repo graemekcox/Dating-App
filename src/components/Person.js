@@ -78,30 +78,36 @@ const CardBodyText = styled.p`
     constructor(props){
         super(props);
         this.state = {
-            // uid: this.props.uid,
-            uid: 'PgHJehQ0zCg1aoOAaYA40ZmQ23A3'
+            uid: this.props.uid,
+            // uid: 'PgHJehQ0zCg1aoOAaYA40ZmQ23A3'
         }
     }
 
     async get_user_info() {
+        console.log(this.state.uid, this.props.uid)
         try {
-            await db.ref("users/" + this.state.uid+"/").once("value").then( snapshot => {
-
+            await db.ref("users/" + this.props.uid+"/").once("value").then( snapshot => {
                 snapshot.forEach ((snap) => {
                     this.setState( { [snap.key]: snap.val()});
-
                 })
-                console.log(this.state)
             });
         } catch (error) {
             this.setState({readError: error.message})
         }
+        console.log(this.state, this.props.uid)
     }
 
-    
-    async componentDidMount() {
+    async componentDidUpdate(prevProps){
+        console.log("PREV PROPS")
+        console.log(prevProps)
+    }
+    async componentWillReceiveProps() {
         this.get_user_info();
     }
+    
+    // async componentDidMount() {
+    //     this.get_user_info();
+    // }
 
 
     render() {
