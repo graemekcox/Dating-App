@@ -1,6 +1,6 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
-import Person from './components/Person.js'
+import Matches from './pages/Matches.js'
 import Chat from './pages/Chat.js'
 import {auth} from './services/firebase';
 import Signup from './pages/Signup.js'
@@ -83,7 +83,7 @@ class App extends React.Component {
                   <PrivateRoute path="/chat/:uid"  
                   authenticated={this.state.authenticated} 
                   component={Chat}/>
-                  <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Person}></PrivateRoute>
+                  <PrivateRoute path="/match" authenticated={this.state.authenticated} component={Matches}></PrivateRoute>
                   <PublicRoute path="/help" component={Help}/>
                   <PrivateRoute path="/settings" authenticated={this.state.authenticated} component={Settings}/>
                   <PublicRoute path="/login"  authenticated={this.state.authenticated} component={Login}/>

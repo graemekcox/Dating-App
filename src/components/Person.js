@@ -1,4 +1,6 @@
 import React from 'react';
+import styled from 'styled-components';
+
 const genders = {
     MALE: 'male',
     FEMALE: 'female',
@@ -36,6 +38,41 @@ function ImageCarousel(){
     );
 }
 
+const CardWrapper = styled.div`
+  overflow: hidden;
+  padding: 32px;
+  background: ${props => props.bg};
+  margin: 48px auto 0;
+  width: 400px;
+  font-family: Quicksand, arial, sans-serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, .05), 0 0px 40px rgba(0, 0, 0, .08);
+  border-radius: 5px;
+`
+
+const CardHeader = styled.header`
+  padding-top: 32px;
+  padding-bottom: 32px;
+`
+
+const CardHeading = styled.h1`
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+`
+
+const CardBody = styled.div`
+  padding-right: 32px;
+  padding-left: 32px;
+`
+
+const CardBodyText = styled.p`
+    position: relative;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    text-align: center;
+`
+
   class Person extends React.Component{
       constructor(props){
         super(props);
@@ -48,8 +85,8 @@ function ImageCarousel(){
       }
     render() {
       return (
-        <div class="ml-sm-auto px-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap">
+        <div class="">
+            {/* <div class="d-flex justify-content-between flex-wrap flex-md-nowrap">
                 <h1 class="h2">John Doe</h1>
                 <div class="btn-group mb-2">
                     <button class="btn btn-sm btn-outline-secondary">Next!</button>
@@ -75,8 +112,20 @@ function ImageCarousel(){
                     <h5>Gender = {this.state.gender}</h5>
                     <h5>Age = {this.state.age}</h5>
                 </div>
-            </div>
-
+            </div> */}
+            <CardWrapper bg={this.props.bg}>
+                <CardBody>
+                    <CardBodyText>Music interests</CardBodyText>
+                    <CardBodyText>TV interests</CardBodyText>
+                    <CardBodyText>Pasta is best</CardBodyText>
+                    <CardBodyText>Math major</CardBodyText>
+                </CardBody>
+                <CardHeader>
+                    <CardHeading>
+                        Age = {this.state.age} years old
+                    </CardHeading>
+                </CardHeader>
+            </CardWrapper>
         </div>
       )
     }
