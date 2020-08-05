@@ -52,6 +52,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    document.title = "Dating App";
+
     auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({

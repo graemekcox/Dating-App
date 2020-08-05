@@ -7,7 +7,8 @@ const genders = {
     FEMALE: 'female',
     n_a: 'n/a'
   }
-  
+
+
 function ImageCarousel(){
     return (
         <div id="carousel-pics" class="carousel slide" data-ride="carousel">
@@ -40,6 +41,7 @@ function ImageCarousel(){
 }
 
 const CardWrapper = styled.div`
+    display: table;
   overflow: hidden;
   padding: 32px;
   background: ${props => props.bg};
@@ -83,8 +85,8 @@ const CardBodyText = styled.p`
         }
     }
 
+    // Will grab all info stored for user based on uid
     async get_user_info() {
-        console.log(this.state.uid, this.props.uid)
         try {
             await db.ref("users/" + this.props.uid+"/").once("value").then( snapshot => {
                 snapshot.forEach ((snap) => {
@@ -94,20 +96,16 @@ const CardBodyText = styled.p`
         } catch (error) {
             this.setState({readError: error.message})
         }
-        console.log(this.state, this.props.uid)
     }
 
-    async componentDidUpdate(prevProps){
-        console.log("PREV PROPS")
-        console.log(prevProps)
+    async componentDidMount() {
+        const {uid} = this.props;
+
+        if (uid) {
+            console.log("There were props!")
+            this.get_user_info();
+        }
     }
-    async componentWillReceiveProps() {
-        this.get_user_info();
-    }
-    
-    // async componentDidMount() {
-    //     this.get_user_info();
-    // }
 
 
     render() {
@@ -120,11 +118,18 @@ const CardBodyText = styled.p`
             </div> */}
             <CardWrapper bg={this.props.bg}>
                 <CardBody>
-                    <CardBodyText>{this.state.orientation}</CardBodyText>
-                    <CardBodyText>{this.state.gender}</CardBodyText>
-                    <CardBodyText>TV interests</CardBodyText>
-                    <CardBodyText>Pasta is best</CardBodyText>
-                    <CardBodyText>Math major</CardBodyText>
+                    <div class="row">
+                        <div class="col-sm">
+                            <CardBodyText>{this.state.orientation}</CardBodyText>
+                            <CardBodyText>{this.state.gender}</CardBodyText>
+                        </div>
+                        <div class="col-sm">
+                            <CardBodyText>TV interests</CardBodyText>
+                            <CardBodyText>Pasta is best</CardBodyText>
+                            <CardBodyText>Math major</CardBodyText>
+                        </div>
+                    </div>
+
                 </CardBody>
                 <CardHeader>
                     <CardHeading>
