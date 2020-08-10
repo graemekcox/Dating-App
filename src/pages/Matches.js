@@ -2,6 +2,12 @@ import React from 'react';
 import Person from '../components/Person.js';
 import {db} from "../services/firebase"
 
+const valid_bg = [
+    'blanchedalmond',
+    'aquamarine',
+    'cornflowerblue'
+]
+  
 
 export default class Matches extends React.Component {
     constructor(props){
@@ -24,25 +30,36 @@ export default class Matches extends React.Component {
             this.setState({readError: error.message})
         }
     }
-
     
     async componentDidMount() {
-        await this.get_users();
+        this.get_users();
     }
+
+    // async componentWillUpdate() {
+    //     await this.get_users();
+    // }
+
 
     render (){
         return(
             <div class="row">
-                {this.state.users.slice(0,3).map(( uid) => {
+                {this.state.users.slice(0,3).map(( uid, ind) => {
+                    
                     return (
                         <div class="col">
-                            <Person uid={uid}/>
+                            { this.state.users[ind] ?
+                            <Person uid={uid} bg={valid_bg[ind]}/> : null
+                            }
                         </div>
                     )
                 })}
-                <div class="col">
-                    <Person uid={this.state.users[0]}/>
-                </div>
+                {/* {
+                    this.state.users[0] ?<Person bg={valid_bg[0]} uid={this.state.users[0]}/>
+                                : null
+                } */}
+                {/* <div class="col">
+                    <Person bg={valid_bg[0]} uid={this.state.users}/>
+                </div> */}
             </div>
         )
     }
