@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import Person from '../components/Person.js';
 import {db} from "../services/firebase"
 
@@ -7,7 +8,20 @@ const valid_bg = [
     'aquamarine',
     'cornflowerblue'
 ]
-  
+
+const Swiper = styled.div`
+    display: flex;
+    overflow-x: visible;
+    transition-property: transform;
+    will-change: transform;
+`
+
+const MainDiv = styled.div`
+    background-color: #000;
+    height: 600px;
+    overflow: hidden;
+    position: relative;
+`
 
 export default class Matches extends React.Component {
     constructor(props){
@@ -39,28 +53,25 @@ export default class Matches extends React.Component {
     //     await this.get_users();
     // }
 
-
     render (){
         return(
-            <div class="row">
-                {this.state.users.slice(0,3).map(( uid, ind) => {
-                    
-                    return (
-                        <div class="col">
-                            { this.state.users[ind] ?
-                            <Person uid={uid} bg={valid_bg[ind]}/> : null
-                            }
-                        </div>
-                    )
-                })}
-                {/* {
-                    this.state.users[0] ?<Person bg={valid_bg[0]} uid={this.state.users[0]}/>
-                                : null
-                } */}
-                {/* <div class="col">
-                    <Person bg={valid_bg[0]} uid={this.state.users}/>
+            <MainDiv>
+                {/* <div class="row">
+  
                 </div> */}
-            </div>
+                <Swiper>
+                {this.state.users.slice(0,3).map(( uid, ind) => {
+                        return (
+                            <div class="col">
+                                { this.state.users[ind] ?
+                                <Person uid={uid} bg={valid_bg[ind]}/> : null
+                                }
+                            </div>
+                        )
+                    })}
+                </Swiper>
+            </MainDiv>
+
         )
     }
 }
